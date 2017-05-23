@@ -1,0 +1,8 @@
+.board {
+  width: 360px;
+  height: 360px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: rgba(23, 221, 25, .6); // then delete
+}

@@ -1,0 +1,8 @@
+@import '~foundation-sites/scss/foundation';
+@include foundation-everything;
+
+@import './base/variables';
+
+@import './components/container';
+@import './components/board';
+@import './components/square';
