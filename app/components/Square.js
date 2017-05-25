@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class Square extends Component {
   clickSquare(index) {
@@ -12,5 +13,9 @@ class Square extends Component {
     );
   }
 }
+
+Square.propTyps = {
+  handleClickSquare: PropTypes.func.isRequired
+};
 
 export default Square;

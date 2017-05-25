@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import InitialFrame from './InitialFrame';
+import SelectSymbol from './SelectSymbol';
 import Board from './Board';
 
 class Game extends Component {
@@ -10,10 +12,31 @@ class Game extends Component {
         '', '', '',
         '', '', '',
         '', '', ''
-      ]
+      ],
+      frameView: 'INITIAL_FRAME'
     };
 
+    this.onHandleOnePlayer = this.onHandleOnePlayer.bind(this);
+    this.onHandleSelectSign = this.onHandleSelectSign.bind(this);
     this.onHandleClickSquare = this.onHandleClickSquare.bind(this);
+  }
+
+  onHandleOnePlayer() {
+    // console.log(this);
+    this.setState(() => {
+      return {
+        frameView: 'SELECT_SYMBOL'
+      };
+    });
+  }
+
+  onHandleSelectSign() {
+    // console.log('Sign');
+    this.setState(() => {
+      return {
+        frameView: 'GAME'
+      }
+    })
   }
 
   onHandleClickSquare(index) {
@@ -29,10 +52,43 @@ class Game extends Component {
   }
 
   render() {
-    const { board } = this.state;
+    const { board, frameView } = this.state;
+    const changeView = () => {
+      console.log(frameView);
+      // return (playerNum ?
+      //   <InitialFrame
+      //     handleOnePlayer={this.onHandleOnePlayer}
+      //   /> :
+      //   <Board
+      //     gameBoard={board}
+      //     handleClickSquare={this.onHandleClickSquare}
+      //   />
+      // );
+      switch (frameView) {
+        case 'INITIAL_FRAME':
+          return (<InitialFrame
+            handleOnePlayer={this.onHandleOnePlayer}
+          />);
+        case 'SELECT_SYMBOL':
+          return (<SelectSymbol
+            handleSelectSign={this.onHandleSelectSign}
+          />);
+        case 'Game':
+          return (<Board
+            gameBoard={board}
+            handleClickSquare={this.onHandleClickSquare}
+          />);
+        default:
+          return (<Board
+            gameBoard={board}
+            handleClickSquare={this.onHandleClickSquare}
+          />);
+      }
+    };
+
     return (
       <div className='game'>
-        <Board gameBoard={board} handleClickSquare={this.onHandleClickSquare} />
+        {changeView()}
       </div>
     );
   }
