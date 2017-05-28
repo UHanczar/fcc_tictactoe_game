@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import calcWinnerInSinglePlayer from './../api/CalcWinner';
+
 import InitialFrame from './InitialFrame';
 import SelectSymbol from './SelectSymbol';
 import Board from './Board';
@@ -13,7 +15,9 @@ class Game extends Component {
         '', '', '',
         '', '', ''
       ],
-      frameView: 'INITIAL_FRAME'
+      frameView: 'INITIAL_FRAME',
+      xIsNext: true,
+      winner: null
     };
 
     this.onHandleOnePlayer = this.onHandleOnePlayer.bind(this);
@@ -35,35 +39,48 @@ class Game extends Component {
     this.setState(() => {
       return {
         frameView: 'GAME'
-      }
-    })
-  }
-
-  onHandleClickSquare(index) {
-    console.log('Click');
-    console.log(index);
-    const newBoard = this.state.board.slice();
-    newBoard[index] = index;
-    this.setState(() => {
-      return {
-        board: newBoard
       };
     });
   }
 
+  onHandleClickSquare(index) {
+    // console.log('Click', index);
+    const { xIsNext } = this.state;
+    let { winner } = this.state;
+    const newBoard = this.state.board.slice();
+
+    if (calcWinnerInSinglePlayer(newBoard) || newBoard[index] !== '') {
+      return;
+    } else {
+      if (xIsNext) {
+        newBoard[index] = 'X';
+      } else {
+        newBoard[index] = 'O';
+      }
+    }
+
+    this.setState(() => {
+      return {
+        board: newBoard,
+        xIsNext: !xIsNext,
+        winner: winner
+      };
+    });
+
+    if (calcWinnerInSinglePlayer(newBoard)) {
+      xIsNext ? winner = 'X' : winner = 'O';
+      console.log(winner);
+    }
+    console.log(winner);
+  }
+
   render() {
-    const { board, frameView } = this.state;
+    const { board, frameView, winner } = this.state;
+    // const currentWinner = calcWinnerInSinglePlayer(board);
     const changeView = () => {
-      console.log(frameView);
-      // return (playerNum ?
-      //   <InitialFrame
-      //     handleOnePlayer={this.onHandleOnePlayer}
-      //   /> :
-      //   <Board
-      //     gameBoard={board}
-      //     handleClickSquare={this.onHandleClickSquare}
-      //   />
-      // );
+      // console.log(frameView);
+      // console.log(winner);
+
       switch (frameView) {
         case 'INITIAL_FRAME':
           return (<InitialFrame
@@ -74,15 +91,25 @@ class Game extends Component {
             handleSelectSign={this.onHandleSelectSign}
           />);
         case 'Game':
-          return (<Board
-            gameBoard={board}
-            handleClickSquare={this.onHandleClickSquare}
-          />);
+          return (
+            <div>
+              <p>Winner: { winner }</p>
+              <Board
+                gameBoard={board}
+                handleClickSquare={this.onHandleClickSquare}
+              />
+            </div>
+          );
         default:
-          return (<Board
-            gameBoard={board}
-            handleClickSquare={this.onHandleClickSquare}
-          />);
+          return (
+            <div>
+              <p>Winner: { winner }</p>
+              <Board
+                gameBoard={board}
+                handleClickSquare={this.onHandleClickSquare}
+              />
+            </div>
+          );
       }
     };
 
