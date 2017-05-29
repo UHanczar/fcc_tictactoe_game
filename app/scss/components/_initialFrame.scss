@@ -1,0 +1,19 @@
+.initial-frame {
+  width: 360px;
+  height: 360px;
+  display: flex;
+  flex-direction: colomn;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  border: 1px solid #000000;
+  // background-color: rgba(23, 221, 25, .6); // then delete
+
+  button:first-of-type {
+    margin-right: 20px;
+  }
+
+  button.button-wide {
+    padding: 10px 40px;
+  }
+}

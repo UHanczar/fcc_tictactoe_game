@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import calcWinnerInSinglePlayer from './../api/CalcWinner';
+import calcWinner from './../api/CalcWinner';
 
 import InitialFrame from './InitialFrame';
 import SelectSymbol from './SelectSymbol';
@@ -17,12 +17,27 @@ class Game extends Component {
       ],
       frameView: 'INITIAL_FRAME',
       xIsNext: true,
-      winner: null
+      winner: null,
+      count: {
+        X: 0,
+        O: 0
+      }
     };
 
     this.onHandleOnePlayer = this.onHandleOnePlayer.bind(this);
     this.onHandleSelectSign = this.onHandleSelectSign.bind(this);
     this.onHandleClickSquare = this.onHandleClickSquare.bind(this);
+    this.reset = this.reset.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.winner !== prevState) {
+      if (this.state.winner !== null) {
+        this.transition = setTimeout(() => {
+          this.reset();
+        }, 3000);
+      }
+    }
   }
 
   onHandleOnePlayer() {
@@ -49,7 +64,7 @@ class Game extends Component {
     let { winner } = this.state;
     const newBoard = this.state.board.slice();
 
-    if (calcWinnerInSinglePlayer(newBoard) || newBoard[index] !== '') {
+    if (calcWinner.singlePlayer(newBoard) || newBoard[index] !== '') {
       return;
     } else {
       if (xIsNext) {
@@ -67,16 +82,29 @@ class Game extends Component {
       };
     });
 
-    if (calcWinnerInSinglePlayer(newBoard)) {
+    if (calcWinner.singlePlayer(newBoard)) {
       xIsNext ? winner = 'X' : winner = 'O';
-      console.log(winner);
+      xIsNext ? this.state.count.X++ : this.state.count.O++;
     }
-    console.log(winner);
+  }
+
+  reset() {
+    this.setState(() => {
+      return {
+        board: [
+          '', '', '',
+          '', '', '',
+          '', '', ''
+        ],
+        xIsNext: true,
+        winner: null,
+      };
+    });
   }
 
   render() {
     const { board, frameView, winner } = this.state;
-    // const currentWinner = calcWinnerInSinglePlayer(board);
+
     const changeView = () => {
       // console.log(frameView);
       // console.log(winner);
@@ -90,26 +118,21 @@ class Game extends Component {
           return (<SelectSymbol
             handleSelectSign={this.onHandleSelectSign}
           />);
-        case 'Game':
+        case 'GAME':
           return (
-            <div>
-              <p>Winner: { winner }</p>
+            <div className='game'>
+              <div className='game-info'>
+                <p>Winner: { winner }</p>
+                <p>Count X: {this.state.count.X} O: {this.state.count.O}</p>
+                <button className='button prime hollow' onClick={this.reset}>Reset All</button>
+              </div>
               <Board
                 gameBoard={board}
                 handleClickSquare={this.onHandleClickSquare}
               />
             </div>
           );
-        default:
-          return (
-            <div>
-              <p>Winner: { winner }</p>
-              <Board
-                gameBoard={board}
-                handleClickSquare={this.onHandleClickSquare}
-              />
-            </div>
-          );
+        // no default
       }
     };
 

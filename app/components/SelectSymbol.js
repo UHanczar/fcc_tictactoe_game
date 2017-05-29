@@ -7,10 +7,10 @@ class  SelectSymbol extends Component {
   }
   render() {
     return (
-      <div>
-        <h2>Whould you like to be X or O</h2>
-        <button className='button' onClick={() => this.selectSigh()}>X</button>
-        <button className='button'>O</button>
+      <div className='initial-frame'>
+        <h4>Whould you like to be X or O</h4>
+        <button className='button hollow primary button-wide' onClick={() => this.selectSigh()}>X</button>
+        <button className='button hollow primary button-wide'>O</button>
       </div>
     )
   }

@@ -8,10 +8,10 @@ class InitialFrame extends Component {
 
   render() {
     return (
-      <div>
-        <p>How do you want to play?</p>
-        <button className='button' onClick={() => this.onOnePlayer()}>One player</button>
-        <button className='button'>Two players</button>
+      <div className='initial-frame'>
+        <h4>How do you want to play?</h4>
+        <button className='button hollow primary' onClick={() => this.onOnePlayer()}>One player</button>
+        <button className='button hollow primary'>Two players</button>
       </div>
     );
   }

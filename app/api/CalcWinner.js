@@ -1,4 +1,4 @@
-const calcWinnerInSinglePlayer = (squares) => {
+const singlePlayer = (squares) => {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -20,4 +20,6 @@ const calcWinnerInSinglePlayer = (squares) => {
 };
 
 
-export default calcWinnerInSinglePlayer;
+export default {
+  singlePlayer
+};

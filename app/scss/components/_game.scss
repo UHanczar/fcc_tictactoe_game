@@ -1,0 +1,10 @@
+.game-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-around;
+  align-items: center;
+
+  button {
+    margin-left: 100px;
+  }
+}
