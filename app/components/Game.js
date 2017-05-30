@@ -16,7 +16,7 @@ class Game extends Component {
         '', '', ''
       ],
       frameView: 'INITIAL_FRAME',
-      xIsNext: true,
+      xIsNext: undefined,
       winner: null,
       count: {
         X: 0,
@@ -38,6 +38,17 @@ class Game extends Component {
         }, 3000);
       }
     }
+    // clearTimeout(this.transition);
+  }
+
+  tie(board) {
+    const moves = board.filter(val => val === '').length -1;
+    console.log(moves);
+    if (moves === 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   onHandleOnePlayer() {
@@ -49,13 +60,28 @@ class Game extends Component {
     });
   }
 
-  onHandleSelectSign() {
+  onHandleSelectSign(sign) {
     // console.log('Sign');
+    console.log(sign);
     this.setState(() => {
       return {
         frameView: 'GAME'
       };
     });
+
+    if (sign === 'X') {
+      this.setState(() => {
+        return {
+          xIsNext: true
+        };
+      });
+    } else if (sign === 'O') {
+      this.setState(() => {
+        return {
+          xIsNext: false
+        };
+      });
+    }
   }
 
   onHandleClickSquare(index) {
@@ -63,6 +89,10 @@ class Game extends Component {
     const { xIsNext } = this.state;
     let { winner } = this.state;
     const newBoard = this.state.board.slice();
+
+    if (this.tie(newBoard)) {
+      winner = 'Draw';
+    }
 
     if (calcWinner.singlePlayer(newBoard) || newBoard[index] !== '') {
       return;
@@ -85,10 +115,12 @@ class Game extends Component {
     if (calcWinner.singlePlayer(newBoard)) {
       xIsNext ? winner = 'X' : winner = 'O';
       xIsNext ? this.state.count.X++ : this.state.count.O++;
+      // this.state.xIsNext ? this.state.xIsNext = true : this.state.xIsNext = false;
     }
   }
 
   reset() {
+    clearTimeout(this.transition);
     this.setState(() => {
       return {
         board: [
@@ -96,7 +128,7 @@ class Game extends Component {
           '', '', '',
           '', '', ''
         ],
-        xIsNext: true,
+        xIsNext: this.state.xIsNext ? this.state.xIsNext = false : this.state.xIsNext = true,
         winner: null,
       };
     });
