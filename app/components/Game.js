@@ -16,6 +16,7 @@ class Game extends Component {
         '', '', ''
       ],
       frameView: 'INITIAL_FRAME',
+      gameMode: undefined,
       xIsNext: undefined,
       winner: null,
       count: {
@@ -24,7 +25,7 @@ class Game extends Component {
       }
     };
 
-    this.onHandleOnePlayer = this.onHandleOnePlayer.bind(this);
+    this.onHandlePlayer = this.onHandlePlayer.bind(this);
     this.onHandleSelectSign = this.onHandleSelectSign.bind(this);
     this.onHandleClickSquare = this.onHandleClickSquare.bind(this);
     this.reset = this.reset.bind(this);
@@ -42,8 +43,8 @@ class Game extends Component {
   }
 
   tie(board) {
-    const moves = board.filter(val => val === '').length -1;
-    console.log(moves);
+    const moves = board.filter(val => val === '').length - 1;
+    // console.log(moves);
     if (moves === 0) {
       return true;
     } else {
@@ -51,23 +52,42 @@ class Game extends Component {
     }
   }
 
-  onHandleOnePlayer() {
-    // console.log(this);
-    this.setState(() => {
-      return {
-        frameView: 'SELECT_SYMBOL'
-      };
-    });
+  onHandlePlayer(mode) {
+    console.log(mode);
+    switch (mode) {
+      case 'singlePlayer':
+        return this.setState(() => {
+          return {
+            frameView: 'SELECT_SYMBOL',
+            gameMode: mode
+          };
+        });
+      case 'playWithAI':
+        return this.setState(() => {
+          return {
+            frameView: 'SELECT_SYMBOL',
+            gameMode: mode
+          };
+        });
+    }
   }
 
   onHandleSelectSign(sign) {
-    // console.log('Sign');
-    console.log(sign);
-    this.setState(() => {
-      return {
-        frameView: 'GAME'
-      };
-    });
+    // console.log(sign);
+    const { gameMode } = this.state;
+    if (gameMode === 'singlePlayer') {
+      this.setState(() => {
+        return {
+          frameView: 'SINGLE_PLAYER_GAME'
+        };
+      });
+    } else {
+      this.setState(() => {
+        return {
+          frameView: undefined
+        };
+      });
+    }
 
     if (sign === 'X') {
       this.setState(() => {
@@ -135,7 +155,7 @@ class Game extends Component {
   }
 
   render() {
-    const { board, frameView, winner } = this.state;
+    const { board, frameView, winner, gameMode } = this.state;
 
     const changeView = () => {
       // console.log(frameView);
@@ -144,13 +164,13 @@ class Game extends Component {
       switch (frameView) {
         case 'INITIAL_FRAME':
           return (<InitialFrame
-            handleOnePlayer={this.onHandleOnePlayer}
+            handlePlayer={this.onHandlePlayer}
           />);
         case 'SELECT_SYMBOL':
           return (<SelectSymbol
             handleSelectSign={this.onHandleSelectSign}
           />);
-        case 'GAME':
+        case 'SINGLE_PLAYER_GAME':
           return (
             <div className='game'>
               <div className='game-info'>
