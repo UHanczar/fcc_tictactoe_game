@@ -14,7 +14,7 @@ const Board = (props) => {
 };
 
 Board.propTyps = {
-  board: PropTypes.array.isRequired
+  gameBoard: PropTypes.array.isRequired
 };
 
 export default Board;
