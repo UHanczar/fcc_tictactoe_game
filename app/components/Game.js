@@ -37,15 +37,17 @@ class Game extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.winner !== prevState) {
       if (this.state.winner !== null) {
-        this.transition = setTimeout(() => {
-          if (this.state.gameMode === 'singlePlayer') {
+        if (this.state.gameMode === 'singlePlayer') {
+          this.changePlayer = setTimeout(() => {
             this.setState(() => {
               return {
-                xIsNext: this.state.xIsNext ? this.state.xIsNext = false : this.state.xIsNext = true
+                xIsNext: !this.state.xIsNext
               };
             });
-          }
+          }, 3001);
+        }
 
+        this.transition = setTimeout(() => {
           this.setState(() => {
             return {
               board: [
@@ -59,7 +61,6 @@ class Game extends Component {
         }, 3000);
       }
     }
-    // clearTimeout(this.transition);
   }
 
   onHandlePlayer(mode) {
@@ -120,7 +121,7 @@ class Game extends Component {
   }
 
   onHandleClickSquare(index) {
-    const { xIsNext } = this.state;
+    const { xIsNext, gameMode } = this.state;
     let { winner } = this.state;
     const newBoard = this.state.board.slice();
 
@@ -143,13 +144,15 @@ class Game extends Component {
       xIsNext ? this.state.count.X++ : this.state.count.O++;
     }
 
-    this.setState(() => {
-      return {
-        board: newBoard,
-        xIsNext: !xIsNext,
-        winner
-      };
-    });
+    if(!this.state.winner) {
+      this.setState(() => {
+        return {
+          board: newBoard,
+          xIsNext: !xIsNext,
+          winner
+        };
+      });
+    }
   }
 
   reset() {
@@ -355,7 +358,8 @@ class Game extends Component {
             <div className='game'>
               <div className='game-info'>
                 <p>Winner: { winner }</p>
-                <p>Count X: {this.state.count.X} O: {this.state.count.O}</p>
+                <p>Count X: {this.state.count.X}</p>
+                <p>O: {this.state.count.O}</p>
                 <button className='button prime hollow' onClick={this.reset}>Reset All</button>
               </div>
               <Board
