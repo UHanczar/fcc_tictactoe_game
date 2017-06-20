@@ -15,6 +15,7 @@ class Game extends Component {
         '', '', '',
         '', '', ''
       ],
+      winnerSquares: ['a', 'a', 'a'],
       frameView: 'INITIAL_FRAME',
       gameMode: undefined,
       xIsNext: undefined,
@@ -31,7 +32,8 @@ class Game extends Component {
     this.onHandleSelectSign = this.onHandleSelectSign.bind(this);
     this.onHandleClickSquare = this.onHandleClickSquare.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
-    this.reset = this.reset.bind(this);
+    this.restartGame = this.restartGame.bind(this);
+    this.resetAll = this.resetAll.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -55,7 +57,8 @@ class Game extends Component {
                 '', '', '',
                 '', '', ''
               ],
-              winner: null
+              winner: null,
+              winnerSquares: ['a', 'a', 'a'],
             };
           });
         }, 3000);
@@ -140,11 +143,19 @@ class Game extends Component {
     }
 
     if (calcWinner.singlePlayer(newBoard)) {
+      let res = calcWinner.singlePlayer(newBoard);
+
+      this.setState(() => {
+        return {
+          winnerSquares: res
+        };
+      });
+
       xIsNext ? winner = 'X' : winner = 'O';
       xIsNext ? this.state.count.X++ : this.state.count.O++;
     }
 
-    if(!this.state.winner) {
+    if (!this.state.winner) {
       this.setState(() => {
         return {
           board: newBoard,
@@ -155,7 +166,7 @@ class Game extends Component {
     }
   }
 
-  reset() {
+  restartGame() {
     clearTimeout(this.transition);
     this.setState(() => {
       return {
@@ -166,6 +177,31 @@ class Game extends Component {
         ],
         xIsNext: this.state.xIsNext ? this.state.xIsNext = false : this.state.xIsNext = true,
         winner: null,
+        winnerSquares: ['a', 'a', 'a'],
+        count: {
+          X: 0,
+          O: 0
+        }
+      };
+    });
+  }
+
+  resetAll() {
+    clearTimeout(this.transition);
+    this.setState(() => {
+      return {
+        board: [
+          '', '', '',
+          '', '', '',
+          '', '', ''
+        ],
+        frameView: 'INITIAL_FRAME',
+        gameMode: undefined,
+        xIsNext: undefined,
+        maxPlayer: undefined,
+        minPlayer: undefined,
+        winner: null,
+        winnerSquares: ['a', 'a', 'a'],
         count: {
           X: 0,
           O: 0
@@ -270,11 +306,14 @@ class Game extends Component {
 
     if (currentBoard) {
       if (calcWinner.singlePlayer(currentBoard)) {
+        let res = calcWinner.singlePlayer(currentBoard);
+
         player === 'X' ? this.state.count.X++ : this.state.count.O++;
 
         this.setState({
           board: currentBoard,
-          winner: player
+          winner: player,
+          winnerSquares: res
         });
         return false;
       }
@@ -300,10 +339,13 @@ class Game extends Component {
 
       if (currentBoard) {
         if (calcWinner.singlePlayer(currentBoard)) {
+          let res = calcWinner.singlePlayer(currentBoard);
           player === 'X' ? this.state.count.X++ : this.state.count.O++;
+
           this.setState({
             board: currentBoard,
-            winner: player
+            winner: player,
+            winnerSquares: res
           });
           return false;
         }
@@ -324,7 +366,7 @@ class Game extends Component {
   }
 
   render() {
-    const { board, frameView, winner } = this.state;
+    const { board, frameView, winner, winnerSquares } = this.state;
 
     const changeView = () => {
       // console.log(frameView);
@@ -345,12 +387,15 @@ class Game extends Component {
               <div className='game-info'>
                 <p>Winner: { winner }</p>
                 <p>Count X: {this.state.count.X} O: {this.state.count.O}</p>
-                <button className='button prime hollow' onClick={this.reset}>Reset All</button>
+                <button className='button prime hollow' onClick={this.restartGame}>Restart Game</button>
               </div>
               <Board
                 gameBoard={board}
+                winner={winner}
+                winnerSquares={winnerSquares}
                 handleClickSquare={this.onHandleClickSquare}
               />
+              <button className='button expanded' onClick={this.resetAll}>Reset All</button>
             </div>
           );
         case 'PLAY_WITH_AI':
@@ -360,12 +405,15 @@ class Game extends Component {
                 <p>Winner: { winner }</p>
                 <p>Count X: {this.state.count.X}</p>
                 <p>O: {this.state.count.O}</p>
-                <button className='button prime hollow' onClick={this.reset}>Reset All</button>
+                <button className='button prime hollow' onClick={this.restartGame}>Restart Game</button>
               </div>
               <Board
                 gameBoard={board}
+                winner={winner}
+                winnerSquares={winnerSquares}
                 handleClickSquare={this.gameLoop}
               />
+              <button className='button expanded' onClick={this.resetAll}>Reset All</button>
             </div>
           )
         // no default

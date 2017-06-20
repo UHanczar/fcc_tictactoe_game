@@ -8,3 +8,9 @@
   border: 1px solid $main-color; // then delete
   font-size: 3rem;
 }
+
+.winnerSquares {
+  background-color: $main-color;
+  border: 1px solid white;
+  color: white;
+}

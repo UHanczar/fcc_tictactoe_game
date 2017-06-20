@@ -7,9 +7,9 @@ class Square extends Component {
   }
 
   render() {
-    const { value, index } = this.props;
+    const { value, index, winner, winnerSquares } = this.props;
     return (
-      <div className='square' onClick={() => this.clickSquare(index)}>{value}</div>
+      <div className={winnerSquares !== ['a', 'a', 'a'] && winnerSquares[0] === index || winnerSquares[1] === index || winnerSquares[2] === index ? 'square winnerSquares' : 'square'} onClick={() => this.clickSquare(index)}>{value}</div>
     );
   }
 }
